@@ -1,4 +1,4 @@
-package com.example.msordenes.infrastructure.web;
+package com.example.msordenes.infrastructure.controller;
 
 import com.example.msordenes.application.dto.CarritoResponse;
 import com.example.msordenes.application.dto.UpsertItemCarritoRequest;
