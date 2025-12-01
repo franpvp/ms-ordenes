@@ -6,8 +6,6 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "PAGO")
@@ -20,14 +18,17 @@ public class PagoEntity {
     @Column(name = "id_pago")
     private Long id;
 
-    @Column(name = "id_orden", nullable = false)
-    private Long idOrden;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_orden", nullable = false)
+    private OrdenEntity orden;
 
-    @Column(name = "id_metodo_pago", nullable = false)
-    private Long idMetodoPago;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_metodo_pago", nullable = false)
+    private MetodoPagoEntity metodoPago;
 
-    @Column(name = "id_estado_pago", nullable = false)
-    private Long idEstadoPago;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_estado_pago", nullable = false)
+    private EstadoPagoEntity estadoPago;
 
     @Column(name = "monto", nullable = false)
     private BigDecimal monto;

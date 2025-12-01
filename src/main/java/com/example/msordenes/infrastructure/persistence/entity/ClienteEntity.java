@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "CLIENTE")
@@ -19,8 +17,9 @@ public class ClienteEntity {
     @Column(name = "id_cliente")
     private Long id;
 
-    @Column(name = "id_usuario", nullable = false)
-    private Long idUsuario;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_usuario", nullable = false, unique = true)
+    private UsuarioEntity usuario;
 
     @Column(name = "nombre", nullable = false)
     private String nombre;

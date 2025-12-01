@@ -14,6 +14,7 @@ public class CarritoItem {
     private int cantidad;
     private BigDecimal precioUnitario;
 
+
     public BigDecimal getSubtotal() {
         if (precioUnitario == null) {
             return BigDecimal.ZERO;

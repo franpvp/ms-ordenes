@@ -29,8 +29,7 @@ public class OrdenEntityMapper {
                 .idOrden(entity.getId())
                 .fechaOrden(entity.getFechaOrden())
                 .estadoOrden(entity.getEstadoOrden())
-                .idPago(entity.getIdPago())
-                .idCarrito(entity.getIdCarrito())
+                .idCarrito(entity.getCarrito().getId())
                 .build();
     }
 }

@@ -1,20 +1,12 @@
 package com.example.msordenes.infrastructure.mapper;
 
-
-import com.example.msordenes.application.dto.CarritoItemResponse;
-import com.example.msordenes.application.dto.CarritoResponse;
 import com.example.msordenes.domain.model.Carrito;
 import com.example.msordenes.domain.model.CarritoItem;
-import com.example.msordenes.infrastructure.persistence.entity.CarritoEntity;
-import com.example.msordenes.infrastructure.persistence.entity.ClienteEntity;
-import com.example.msordenes.infrastructure.persistence.entity.DetalleCarritoEntity;
-import com.example.msordenes.infrastructure.persistence.entity.EstadoCarritoEntity;
-import com.example.msordenes.infrastructure.persistence.entity.ProductoEntity;
+import com.example.msordenes.infrastructure.persistence.entity.*;
 import com.example.msordenes.infrastructure.persistence.jpa.EstadoCarritoJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,77 +17,63 @@ public class CarritoEntityMapper {
     private final EstadoCarritoJpaRepository estadoCarritoJpaRepository;
     private final ProductoEntityMapper productoEntityMapper;
 
-    public Carrito toDomain(CarritoEntity entity) {
-        if (entity == null) {
+    public Carrito toDomain(CarritoEntity carritoEntity) {
+        if (carritoEntity == null) {
             return null;
         }
 
-        Long idCliente = null;
-        if (entity.getCliente() != null) {
-            idCliente = entity.getCliente().getId();
-        }
-
-        String estado = null;
-        if (entity.getEstadoCarrito() != null) {
-            estado = entity.getEstadoCarrito().getEstadoCarrito();
-        }
-
-        List<CarritoItem> items = entity.getItems().stream()
-                .map(this::toDomainItem)
-                .collect(Collectors.toList());
-
         return Carrito.builder()
-                .idCarrito(entity.getId())
-                .idCliente(idCliente)
-                .estado(estado)
-                .fechaCreacion(entity.getFechaCreacion())
-                .items(items)
+                .idCarrito(carritoEntity.getId())
+                .idCliente(carritoEntity.getCliente().getId())
+                .estado(carritoEntity.getEstadoCarrito().getNombre())
+                .fechaCreacion(carritoEntity.getFechaCreacion())
+                .items(obtenerItemsCarrito(carritoEntity))
                 .build();
     }
 
+
+    private List<CarritoItem> obtenerItemsCarrito(CarritoEntity carritoEntity) {
+        return carritoEntity.getItems().stream()
+                .map(this::toDomainItem)
+                .collect(Collectors.toList());
+    }
+
+
     private CarritoItem toDomainItem(DetalleCarritoEntity detalle) {
-        ProductoEntity p = detalle.getProducto();
+        ProductoEntity producto = detalle.getProducto();
 
         return CarritoItem.builder()
-                .idProducto(p.getId())
-                .nombreProducto(p.getNombre())
-                .precioUnitario(p.getPrecioUnitario())
+                .idProducto(producto.getId())
+                .nombreProducto(producto.getNombre())
+                .precioUnitario(producto.getPrecioUnitario())
                 .cantidad(detalle.getCantidad())
                 .build();
     }
 
 
     public CarritoEntity toEntity(Carrito carrito) {
-        if (carrito == null) {
-            return null;
-        }
+        if (carrito == null) return null;
 
         CarritoEntity entity = new CarritoEntity();
         entity.setId(carrito.getIdCarrito());
 
         if (carrito.getIdCliente() != null) {
-            ClienteEntity cliente = new ClienteEntity();
-            cliente.setId(carrito.getIdCliente());
-            entity.setCliente(cliente);
-        } else {
-            entity.setCliente(null);
+            ClienteEntity clienteRef = new ClienteEntity();
+            clienteRef.setId(carrito.getIdCliente());
+            entity.setCliente(clienteRef);
         }
 
         if (carrito.getEstado() != null) {
-            EstadoCarritoEntity estadoCarrito = estadoCarritoJpaRepository
-                    .findByEstadoCarrito(carrito.getEstado())
-                    .orElseThrow(() -> new IllegalArgumentException(
-                            "Estado de carrito no válido: " + carrito.getEstado()
-                    ));
-            entity.setEstadoCarrito(estadoCarrito);
-        } else {
-            entity.setEstadoCarrito(null);
+            EstadoCarritoEntity estado = estadoCarritoJpaRepository
+                    .findByNombre(carrito.getEstado())
+                    .orElseThrow(() ->
+                            new IllegalArgumentException("Estado inválido: " + carrito.getEstado())
+                    );
+            entity.setEstadoCarrito(estado);
         }
 
         entity.setFechaCreacion(carrito.getFechaCreacion());
-
-        BigDecimal total = carrito.calcularTotal();
-        entity.setTotal(total);
+        entity.setTotal(carrito.calcularTotal());
 
         List<DetalleCarritoEntity> detalles = carrito.getItems().stream()
                 .map(item -> toDetalleEntity(item, entity))
@@ -108,44 +86,18 @@ public class CarritoEntityMapper {
 
     private DetalleCarritoEntity toDetalleEntity(CarritoItem item, CarritoEntity carritoEntity) {
         DetalleCarritoEntity detalle = new DetalleCarritoEntity();
-        detalle.setCarrito(carritoEntity);
 
-        ProductoEntity producto = productoEntityMapper.toReferenceEntity(item.getIdProducto());
-        detalle.setProducto(producto);
+        detalle.setCarrito(carritoEntity);
         detalle.setCantidad(item.getCantidad());
         detalle.setSubtotal(item.getSubtotal());
+
+        ProductoEntity productoRef =
+                productoEntityMapper.toReferenceEntity(item.getIdProducto());
+
+        detalle.setProducto(productoRef);
 
         return detalle;
     }
 
 
-    public CarritoResponse toResponse(Carrito carrito) {
-        if (carrito == null) {
-            return null;
-        }
-
-        BigDecimal total = carrito.calcularTotal();
-
-        return CarritoResponse.builder()
-                .idCarrito(carrito.getIdCarrito())
-                .idCliente(carrito.getIdCliente())
-                .estadoCarrito(carrito.getEstado())
-                .total(total)
-                .items(
-                        carrito.getItems().stream()
-                                .map(this::toItemResponse)
-                                .collect(Collectors.toList())
-                )
-                .build();
-    }
-
-    private CarritoItemResponse toItemResponse(CarritoItem item) {
-        return CarritoItemResponse.builder()
-                .idProducto(item.getIdProducto())
-                .nombreProducto(item.getNombreProducto())
-                .cantidad(item.getCantidad())
-                .precioUnitario(item.getPrecioUnitario())
-                .subtotal(item.getSubtotal())
-                .build();
-    }
 }

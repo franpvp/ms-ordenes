@@ -2,7 +2,7 @@ package com.example.msordenes.application.usecase;
 
 import com.example.msordenes.application.dto.CarritoResponse;
 import com.example.msordenes.application.dto.UpsertItemCarritoRequest;
-import com.example.msordenes.infrastructure.mapper.CarritoEntityMapper;
+import com.example.msordenes.application.mapper.CarritoResponseMapper;
 import com.example.msordenes.domain.exception.ProductoNoEncontradoException;
 import com.example.msordenes.domain.model.Carrito;
 import com.example.msordenes.domain.model.CarritoItem;
@@ -25,7 +25,7 @@ public class UpsertItemCarritoUseCase {
     private static final String ESTADO_ACTIVO = "ACTIVO";
     private final CarritoRepository carritoRepository;
     private final ProductoRepository productoRepository;
-    private final CarritoEntityMapper carritoEntityMapper;
+    private final CarritoResponseMapper carritoResponseMapper;
 
     @Transactional
 
@@ -56,7 +56,7 @@ public class UpsertItemCarritoUseCase {
         }
 
         Carrito guardado = carritoRepository.guardarCarrito(carrito);
-        return carritoEntityMapper.toResponse(guardado);
+        return carritoResponseMapper.toResponse(guardado);
     }
 
     private Carrito crearNuevoCarritoParaCliente(Long idCliente) {

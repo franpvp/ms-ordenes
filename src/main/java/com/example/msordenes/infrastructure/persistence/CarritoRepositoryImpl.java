@@ -19,7 +19,7 @@ public class CarritoRepositoryImpl implements CarritoRepository {
 
     @Override
     public Optional<Carrito> buscarCarritoActivoPorCliente(Long idCliente) {
-        return carritoJpaRepository.findByIdClienteAndEstado(idCliente, "ACTIVO")
+        return carritoJpaRepository.findByCliente_IdAndEstadoCarrito_Nombre(idCliente, "ACTIVO")
                 .map(carritoEntityMapper::toDomain);
     }
 

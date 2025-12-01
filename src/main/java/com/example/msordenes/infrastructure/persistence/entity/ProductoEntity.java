@@ -17,10 +17,15 @@ public class ProductoEntity {
     @Column(name = "id_producto")
     private Long id;
 
-    @Column(name = "id_categoria", nullable = false)
-    private Long idCategoria;
 
-    @Column(name = "nombre", nullable = false)
+    //1 - 1
+    //2 - 1
+    //3 - 1
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_categoria", nullable = false)
+    private CategoriaEntity categoria;
+
+    @Column(name = "nombre")
     private String nombre;
 
     @Column(name = "descripcion")
@@ -34,7 +39,6 @@ public class ProductoEntity {
 
     @Column(name = "imagen_url")
     private String imagenUrl;
-
 }
 
 

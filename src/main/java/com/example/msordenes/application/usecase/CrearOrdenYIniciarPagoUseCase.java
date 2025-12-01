@@ -34,12 +34,11 @@ public class CrearOrdenYIniciarPagoUseCase {
 
 
         Carrito carrito = carritoRepository.buscarCarritoPorId(request.getIdCarrito())
-                .orElseThrow(() -> new CarritoNoEncontradoException(""+request.getIdCarrito()));
+                .orElseThrow(() -> new CarritoNoEncontradoException("" + request.getIdCarrito()));
 
         Orden orden = Orden.builder()
                 .idOrden(null)
                 .idCarrito(carrito.getIdCarrito())
-                .idPago(null)
                 .estadoOrden(ESTADO_INICIAL)
                 .fechaOrden(OffsetDateTime.now())
                 .build();

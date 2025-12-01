@@ -17,16 +17,13 @@ public class OrdenEntity {
     @Column(name = "id_orden")
     private Long id;
 
-    @Column(name = "id_carrito", nullable = false)
-    private Long idCarrito;
-
-    @Column(name = "id_despacho")
-    private Long idDespacho;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_carrito", nullable = false)
+    private CarritoEntity carrito;
 
     @Column(name = "fecha_orden", nullable = false)
     private OffsetDateTime fechaOrden;
 
     @Column(name = "estado_orden", nullable = false, length = 50)
     private String estadoOrden;
-
 }

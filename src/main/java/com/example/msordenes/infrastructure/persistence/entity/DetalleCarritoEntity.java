@@ -14,19 +14,21 @@ public class DetalleCarritoEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id_detalle_carrito", nullable = false)
     private Long id;
 
-    @Column(name = "id_carrito", nullable = false)
-    private Long idCarrito;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_carrito", nullable = false)
+    private CarritoEntity carrito;
 
-    @Column(name = "id_producto", nullable = false)
-    private Long idProducto;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_producto", nullable = false)
+    private ProductoEntity producto;
 
-    @Column(name = "cantidad", nullable = false)
+    @Column(name = "cantidad")
     private int cantidad;
 
-    @Column(name = "subtotal", nullable = false)
+    @Column(name = "subtotal")
     private BigDecimal subtotal;
 }
 

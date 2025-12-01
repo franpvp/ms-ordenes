@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "USUARIO")
@@ -33,6 +31,10 @@ public class UsuarioEntity {
 
     @Column(name = "fecha_creacion", nullable = false)
     private OffsetDateTime fechaCreacion = OffsetDateTime.now();
+
+
+    @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY)
+    private ClienteEntity cliente;
 }
 
 

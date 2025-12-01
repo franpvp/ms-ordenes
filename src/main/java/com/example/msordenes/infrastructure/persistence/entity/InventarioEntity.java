@@ -15,12 +15,12 @@ public class InventarioEntity {
     @Column(name = "id_inventario")
     private Long id;
 
-    @Column(name = "id_producto", nullable = false)
-    private Long idProducto;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_producto", nullable = false)
+    private ProductoEntity producto;
 
-    @Column(name = "cantidad", nullable = false)
+    @Column(name = "cantidad")
     private Integer cantidad;
-
 }
 
 
