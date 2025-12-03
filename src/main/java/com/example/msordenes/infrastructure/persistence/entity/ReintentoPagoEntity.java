@@ -17,9 +17,10 @@ public class ReintentoPagoEntity {
     @Column(name = "id_reintento")
     private Long id;
 
-    @Column(name = "id_pago", nullable = false)
-    private Long idPago;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_pago", nullable = false)
+    private PagoEntity pago;
+    
     @Column(name = "intento_numero", nullable = false)
     private int intentoNumero;
 
