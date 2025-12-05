@@ -35,7 +35,7 @@ public class CarritoEntityMapper {
     private List<CarritoItem> obtenerItemsCarrito(CarritoEntity carritoEntity) {
         return carritoEntity.getItems().stream()
                 .map(this::toDomainItem)
-                .collect(Collectors.toList());
+                .toList();
     }
 
 
@@ -49,7 +49,6 @@ public class CarritoEntityMapper {
                 .cantidad(detalle.getCantidad())
                 .build();
     }
-
 
     public CarritoEntity toEntity(Carrito carrito) {
         if (carrito == null) return null;
@@ -77,7 +76,7 @@ public class CarritoEntityMapper {
 
         List<DetalleCarritoEntity> detalles = carrito.getItems().stream()
                 .map(item -> toDetalleEntity(item, entity))
-                .collect(Collectors.toList());
+                        .toList();
 
         entity.setItems(detalles);
 
@@ -86,7 +85,6 @@ public class CarritoEntityMapper {
 
     private DetalleCarritoEntity toDetalleEntity(CarritoItem item, CarritoEntity carritoEntity) {
         DetalleCarritoEntity detalle = new DetalleCarritoEntity();
-
         detalle.setCarrito(carritoEntity);
         detalle.setCantidad(item.getCantidad());
         detalle.setSubtotal(item.getSubtotal());

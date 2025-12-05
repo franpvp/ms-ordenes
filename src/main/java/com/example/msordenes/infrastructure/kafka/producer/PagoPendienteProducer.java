@@ -3,6 +3,7 @@ package com.example.msordenes.infrastructure.kafka.producer;
 import com.example.msordenes.application.dto.PagoPendienteEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
@@ -11,16 +12,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class PagoPendienteProducer {
 
-    private static final String TOPIC = "pago-pendiente";
-
     private final KafkaTemplate<String, Object> kafkaTemplate;
+
+    private String topic = "pago-pendiente";
 
     public void enviar(PagoPendienteEvent event) {
         String key = event.getIdOrden().toString();
 
         log.info("[ms-ordenes] Enviando evento pago-pendiente para orden {} al topic {}",
-                event.getIdOrden(), TOPIC);
+                event.getIdOrden(), topic);
 
-        kafkaTemplate.send(TOPIC, key, event);
+        kafkaTemplate.send(topic, key, event);
     }
 }

@@ -52,7 +52,7 @@ public class CarritoController {
 
     @Operation(
             summary = "Obtener carrito por ID",
-            description = "Devuelve el carrito (y sus items) a partir del idCarrito."
+            description = "Devuelve el carrito a partir del idCarrito."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Carrito encontrado"),

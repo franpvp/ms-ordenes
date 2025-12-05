@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,11 +32,16 @@ public class CarritoEntity {
     private EstadoCarritoEntity estadoCarrito;
 
     @Column(name = "fecha_creacion", nullable = false)
-    private OffsetDateTime fechaCreacion;
+    private LocalDateTime fechaCreacion;
 
     @Column(name = "total", nullable = false)
     private BigDecimal total;
 
     @OneToMany(mappedBy = "carrito", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DetalleCarritoEntity> items = new ArrayList<>();
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_despacho", referencedColumnName = "id_despacho")
+    private DespachoEntity despacho;
+
 }

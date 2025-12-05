@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 @Slf4j
@@ -29,9 +30,7 @@ public class CrearOrdenYIniciarPagoUseCase {
     private final OrdenDtoMapper ordenDtoMapper;
     private final PagoPendienteProducer pagoPendienteProducer;
 
-
     public OrdenResponse ejecutar(CrearOrdenYIniciarPagoRequest request) {
-
 
         Carrito carrito = carritoRepository.buscarCarritoPorId(request.getIdCarrito())
                 .orElseThrow(() -> new CarritoNoEncontradoException("" + request.getIdCarrito()));
@@ -40,7 +39,7 @@ public class CrearOrdenYIniciarPagoUseCase {
                 .idOrden(null)
                 .idCarrito(carrito.getIdCarrito())
                 .estadoOrden(ESTADO_INICIAL)
-                .fechaOrden(OffsetDateTime.now())
+                .fechaOrden(LocalDateTime.now())
                 .build();
 
         Orden ordenGuardada = ordenRepository.guardar(orden);
@@ -51,7 +50,7 @@ public class CrearOrdenYIniciarPagoUseCase {
         PagoPendienteEvent event = PagoPendienteEvent.builder()
                 .idOrden(ordenGuardada.getIdOrden())
                 .idMetodoPago(request.getIdMetodoPago())
-                .fechaSolicitud(OffsetDateTime.now())
+                .fechaSolicitud(LocalDateTime.now())
                 .build();
 
         pagoPendienteProducer.enviar(event);

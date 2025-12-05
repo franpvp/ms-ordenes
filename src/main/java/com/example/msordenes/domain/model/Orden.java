@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 @Builder
@@ -11,7 +12,7 @@ import java.time.OffsetDateTime;
 @Setter
 public class Orden {
     private Long idOrden;
-    private OffsetDateTime fechaOrden;
+    private LocalDateTime fechaOrden;
     private String estadoOrden;
     private Long idCarrito;
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 @Entity
@@ -22,7 +23,7 @@ public class OrdenEntity {
     private CarritoEntity carrito;
 
     @Column(name = "fecha_orden", nullable = false)
-    private OffsetDateTime fechaOrden;
+    private LocalDateTime fechaOrden;
 
     @Column(name = "estado_orden", nullable = false, length = 50)
     private String estadoOrden;

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 
@@ -20,5 +21,5 @@ import java.time.OffsetDateTime;
 public class PagoPendienteEvent {
     private Long idOrden;
     private Long idMetodoPago;
-    private OffsetDateTime fechaSolicitud;
+    private LocalDateTime fechaSolicitud;
 }

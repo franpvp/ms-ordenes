@@ -35,5 +35,8 @@ public class DespachoEntity {
 
     @Column(name = "codigo_postal", length = 20)
     private String codigoPostal;
+
+    @OneToOne(mappedBy = "despacho")
+    private CarritoEntity carrito;
 }
 

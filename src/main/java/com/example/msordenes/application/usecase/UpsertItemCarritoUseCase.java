@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 
@@ -64,7 +65,7 @@ public class UpsertItemCarritoUseCase {
                 .idCarrito(null)
                 .idCliente(idCliente)
                 .estado(ESTADO_ACTIVO)
-                .fechaCreacion(OffsetDateTime.now())
+                .fechaCreacion(LocalDateTime.now())
                 .items(new ArrayList<>())
                 .build();
     }

@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +16,11 @@ public class Carrito {
     private Long idCarrito;
     private Long idCliente;
     private String estado;
-    private OffsetDateTime fechaCreacion;
+    private LocalDateTime fechaCreacion;
     @Builder.Default
     private List<CarritoItem> items = new ArrayList<>();
+
+    private Despacho despacho;
 
     public BigDecimal calcularTotal() {
         return items.stream()
