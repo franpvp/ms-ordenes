@@ -1,13 +1,7 @@
 package com.example.msordenes.application.dto;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @Setter
@@ -18,4 +12,7 @@ import lombok.ToString;
 public class CrearOrdenYIniciarPagoRequest {
     private Long idCarrito;
     private Long idMetodoPago;
+
+
+    //carrito, despacho, pone pagar -> orden con su  metodo de pago
 }

@@ -1,5 +1,6 @@
 package com.example.msordenes.application.dto;
 
+
 import lombok.*;
 
 import java.util.List;
@@ -10,11 +11,8 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 @Builder
-public class CarritoResponse {
+public class ActualizarCarritoRequest {
 
     private Long idCarrito;
-    private Long idCliente;
-    private String estadoCarrito;
-    private Integer total;
     private List<CarritoItemResponse> items;
 }

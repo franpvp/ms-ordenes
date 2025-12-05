@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-
 @Entity
 @Table(name = "PRODUCTO")
 @Getter
@@ -17,10 +15,6 @@ public class ProductoEntity {
     @Column(name = "id_producto")
     private Long id;
 
-
-    //1 - 1
-    //2 - 1
-    //3 - 1
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_categoria", nullable = false)
     private CategoriaEntity categoria;
@@ -35,7 +29,7 @@ public class ProductoEntity {
     private String marca;
 
     @Column(name = "precio_unitario", nullable = false)
-    private BigDecimal precioUnitario;
+    private Integer precioUnitario;
 
     @Column(name = "imagen_url")
     private String imagenUrl;

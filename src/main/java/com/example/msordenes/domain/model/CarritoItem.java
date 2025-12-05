@@ -3,8 +3,6 @@ package com.example.msordenes.domain.model;
 import lombok.Builder;
 import lombok.Data;
 
-import java.math.BigDecimal;
-
 @Data
 @Builder
 public class CarritoItem {
@@ -12,13 +10,12 @@ public class CarritoItem {
     private Long idProducto;
     private String nombreProducto;
     private int cantidad;
-    private BigDecimal precioUnitario;
+    private Integer precioUnitario;
 
-
-    public BigDecimal getSubtotal() {
+    public Integer getSubtotal() {
         if (precioUnitario == null) {
-            return BigDecimal.ZERO;
+            return 0;
         }
-        return precioUnitario.multiply(BigDecimal.valueOf(cantidad));
+        return precioUnitario * cantidad;
     }
 }

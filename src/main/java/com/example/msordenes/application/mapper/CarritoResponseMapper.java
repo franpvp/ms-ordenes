@@ -6,7 +6,6 @@ import com.example.msordenes.domain.model.Carrito;
 import com.example.msordenes.domain.model.CarritoItem;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
 import java.util.stream.Collectors;
 
 
@@ -16,7 +15,7 @@ public class CarritoResponseMapper {
     public CarritoResponse toResponse(Carrito carrito) {
         if (carrito == null) return null;
 
-        BigDecimal total = carrito.calcularTotal();
+        Integer total = carrito.calcularTotal();
 
         return CarritoResponse.builder()
                 .idCarrito(carrito.getIdCarrito())

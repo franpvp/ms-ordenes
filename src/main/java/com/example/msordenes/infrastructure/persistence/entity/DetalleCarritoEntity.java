@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-
 @Entity
 @Table(name = "DETALLE_CARRITO")
 @Getter
@@ -29,6 +27,6 @@ public class DetalleCarritoEntity {
     private int cantidad;
 
     @Column(name = "subtotal")
-    private BigDecimal subtotal;
+    private Integer subtotal;
 }
 

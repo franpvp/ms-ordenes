@@ -37,6 +37,6 @@ public class DespachoEntity {
     private String codigoPostal;
 
     @OneToOne(mappedBy = "despacho")
-    private CarritoEntity carrito;
+    private OrdenEntity ordenEntity;
 }
 

@@ -3,9 +3,7 @@ package com.example.msordenes.domain.model;
 import lombok.Builder;
 import lombok.Data;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,10 +20,10 @@ public class Carrito {
 
     private Despacho despacho;
 
-    public BigDecimal calcularTotal() {
+    public Integer calcularTotal() {
         return items.stream()
-                .map(CarritoItem::getSubtotal)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .map(CarritoItem::getSubtotal) // este método debe devolver Integer
+                .reduce(0, Integer::sum);
     }
 
     public void agregarOActualizarItem(CarritoItem item) {

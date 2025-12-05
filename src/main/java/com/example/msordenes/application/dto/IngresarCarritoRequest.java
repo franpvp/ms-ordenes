@@ -1,8 +1,10 @@
 package com.example.msordenes.application.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.List;
+
 
 @Getter
 @Setter
@@ -10,11 +12,10 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 @Builder
-public class CarritoResponse {
 
-    private Long idCarrito;
+public class IngresarCarritoRequest {
+
+    @NotNull
     private Long idCliente;
-    private String estadoCarrito;
-    private Integer total;
     private List<CarritoItemResponse> items;
 }

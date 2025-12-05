@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "ORDEN")
@@ -23,8 +22,12 @@ public class OrdenEntity {
     private CarritoEntity carrito;
 
     @Column(name = "fecha_orden", nullable = false)
-    private LocalDateTime fechaOrden;
+    private LocalDateTime fechaOrden = LocalDateTime.now();
 
     @Column(name = "estado_orden", nullable = false, length = 50)
     private String estadoOrden;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_despacho", referencedColumnName = "id_despacho")
+    private DespachoEntity despacho;
 }

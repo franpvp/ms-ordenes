@@ -1,14 +1,8 @@
 package com.example.msordenes.application.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -19,7 +13,7 @@ import java.time.OffsetDateTime;
 public class OrdenResponse {
 
     private Long idOrden;
-    private OffsetDateTime fechaOrden;
+    private LocalDateTime fechaOrden;
     private String estado;
     private Long idCarrito;
 }
