@@ -48,9 +48,10 @@ public class OrdenServiceImpl implements OrdenService {
 
         PagoDto pago = request.getPagoDto().toBuilder()
                 .idOrden(orden.getId())
+                .reprocesado(false)
                 .build();
 
-        //pagoPendienteProducer.enviar(pago);
+        pagoPendienteProducer.enviar(pago);
 
         return OrdenDto.builder()
                 .idOrden(orden.getId())
@@ -60,6 +61,11 @@ public class OrdenServiceImpl implements OrdenService {
                 .listaDetalle(mapearDetallesResponse(detalles))
                 .build();
     }
+
+//    public OrdenDto buscarOrdenPorCliente(OrdenDto request) {
+//
+//
+//    }
 
     private DespachoEntity guardarDespacho(OrdenDto ordenDto) {
         DespachoEntity despachoMapeado = DespachoEntityMapper.mapearAEntity(ordenDto.getDespachoDto());

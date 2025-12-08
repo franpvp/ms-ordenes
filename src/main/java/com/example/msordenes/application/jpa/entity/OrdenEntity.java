@@ -38,4 +38,6 @@ public class OrdenEntity {
     @JoinColumn(name = "id_despacho", referencedColumnName = "id_despacho")
     private DespachoEntity despacho;
 
+    @OneToOne(mappedBy = "orden", fetch = FetchType.LAZY)
+    private PagoEntity pago;
 }

@@ -17,8 +17,8 @@ public class PagoEntity {
     @Column(name = "id_pago")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_orden", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_orden", nullable = false, unique = true)
     private OrdenEntity orden;
 
     @ManyToOne(fetch = FetchType.LAZY)
