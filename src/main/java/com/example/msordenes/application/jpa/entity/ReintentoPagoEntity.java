@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "REINTENTO_PAGO")
@@ -28,7 +28,7 @@ public class ReintentoPagoEntity {
     private String estadoReintento;
 
     @Column(name = "fecha_reintento", nullable = false)
-    private OffsetDateTime fechaReintento;
+    private LocalDateTime fechaReintento;
 
     @Column(name = "mensaje_error", length = 500)
     private String mensajeError;

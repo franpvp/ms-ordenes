@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "CLIENTE")
@@ -39,6 +39,6 @@ public class ClienteEntity {
     private String ciudad;
 
     @Column(name = "fecha_registro", nullable = false)
-    private LocalDate fechaRegistro = LocalDate.now();
+    private LocalDateTime fechaRegistro;
 }
 

@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -26,10 +25,10 @@ public class OrdenEntity {
     private ClienteEntity cliente;
 
     @OneToMany(mappedBy = "orden", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<DetalleOrdenEntity> detalles = new ArrayList<>();
+    private List<DetalleOrdenEntity> detalles;
 
     @Column(name = "fecha_orden", nullable = false)
-    private LocalDateTime fechaOrden = LocalDateTime.now();
+    private LocalDateTime fechaOrden;
 
     @Column(name = "estado_orden", nullable = false, length = 50)
     private String estadoOrden;

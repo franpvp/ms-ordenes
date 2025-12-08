@@ -1,15 +1,17 @@
 package com.example.msordenes.application.jpa.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "PAGO")
 @Getter
 @Setter
+@Builder
 public class PagoEntity {
 
     @Id
@@ -25,14 +27,32 @@ public class PagoEntity {
     @JoinColumn(name = "id_metodo_pago", nullable = false)
     private MetodoPagoEntity metodoPago;
 
+    @Column(name = "monto", nullable = false)
+    private Integer monto;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_estado_pago", nullable = false)
     private EstadoPagoEntity estadoPago;
 
-    @Column(name = "monto", nullable = false)
-    private Integer monto;
+    @Column(name = "motivo_error")
+    private String motivoError;
 
-    @Column(name = "fecha_pago", nullable = false)
-    private OffsetDateTime fechaPago;
+    @Column(name = "fecha_creacion", nullable = false, updatable = false)
+    private LocalDateTime fechaCreacion;
+
+    @Column(name = "fecha_actualizacion")
+    private LocalDateTime fechaActualizacion;
+
+    @PrePersist
+    public void prePersist() {
+        this.fechaCreacion = LocalDateTime.now();
+        this.fechaActualizacion = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.fechaActualizacion = LocalDateTime.now();
+    }
 }
+
 
