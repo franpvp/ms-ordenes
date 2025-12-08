@@ -9,6 +9,6 @@ import java.util.Optional;
 @Repository
 public interface OrdenRepository extends JpaRepository<OrdenEntity, Long> {
 
-    Optional<OrdenRepository> findBy
+    Optional<OrdenEntity> findTopByClienteIdOrderByFechaOrdenDesc(Long idCliente);
 }
 

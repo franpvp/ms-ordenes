@@ -11,7 +11,6 @@ public class ProductoDto {
 
     private Long idProducto;
     private Long idCategoria;
-
     private String nombre;
     private String descripcion;
     private String marca;

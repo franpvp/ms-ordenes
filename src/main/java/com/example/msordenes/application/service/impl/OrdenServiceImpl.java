@@ -1,9 +1,7 @@
 package com.example.msordenes.application.service.impl;
 
-import com.example.msordenes.application.dto.DetalleOrdenDto;
-import com.example.msordenes.application.dto.OrdenDto;
-import com.example.msordenes.application.dto.PagoDto;
-import com.example.msordenes.application.dto.ProductoDto;
+import com.example.msordenes.application.dto.*;
+import com.example.msordenes.application.exception.OrdenNoEncontradaException;
 import com.example.msordenes.application.jpa.entity.DespachoEntity;
 import com.example.msordenes.application.jpa.entity.DetalleOrdenEntity;
 import com.example.msordenes.application.jpa.entity.OrdenEntity;
@@ -62,10 +60,19 @@ public class OrdenServiceImpl implements OrdenService {
                 .build();
     }
 
-//    public OrdenDto buscarOrdenPorCliente(OrdenDto request) {
-//
-//
-//    }
+
+    @Override
+    public OrdenEstadoDto buscarOrdenPorCliente(Long idCliente) {
+
+        OrdenEntity ultimaOrden = ordenRepository.findTopByClienteIdOrderByFechaOrdenDesc(idCliente).orElseThrow(() ->
+                new OrdenNoEncontradaException("No se pudo encontrar la orden"));
+
+        return OrdenEstadoDto.builder()
+                .idOrden(ultimaOrden.getId())
+                .estadoOrden(ultimaOrden.getEstadoOrden())
+                .build();
+
+    }
 
     private DespachoEntity guardarDespacho(OrdenDto ordenDto) {
         DespachoEntity despachoMapeado = DespachoEntityMapper.mapearAEntity(ordenDto.getDespachoDto());
