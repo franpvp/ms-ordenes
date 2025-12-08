@@ -27,9 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrdenServiceImpl implements OrdenService {
 
-
     private final PagoPendienteProducer pagoPendienteProducer;
-
     private final OrdenRepository ordenRepository;
     private final DespachoRepository despachoRepository;
     private final DetalleOrdenRepository detalleOrdenRepository;

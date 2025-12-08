@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 public class PagoErrorConsumer {
 
     private final OrdenRepository ordenRepository;
-    private final ReintentoFeignClient reintentoFeignClient; // <--- Feign de reintentos
+    private final ReintentoFeignClient reintentoFeignClient;
 
     @KafkaListener(
             topics = "${app.kafka.topic.pago-error:pago-error}",
