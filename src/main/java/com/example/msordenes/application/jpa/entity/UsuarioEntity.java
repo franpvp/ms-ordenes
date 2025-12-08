@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "USUARIO")
@@ -30,7 +30,7 @@ public class UsuarioEntity {
     private Boolean activo;
 
     @Column(name = "fecha_creacion", nullable = false)
-    private OffsetDateTime fechaCreacion = OffsetDateTime.now();
+    private LocalDateTime fechaCreacion;
 
 
     @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY)
