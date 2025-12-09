@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 @Builder(toBuilder = true)
-public class PagoPendienteEvent {
+public class PagoDto {
     private Long idOrden;
     private Long idMetodoPago;
     private Integer monto;

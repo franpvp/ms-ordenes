@@ -16,7 +16,7 @@ public class OrdenDto {
     private Long idCliente;
     private List<DetalleOrdenDto> listaDetalle;
     private DespachoDto despachoDto;
-    private PagoPendienteEvent pagoPendienteEvent;
+    private PagoDto pagoDto;
 
 
     public Integer getTotalItems() {

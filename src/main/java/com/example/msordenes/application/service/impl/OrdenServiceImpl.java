@@ -42,7 +42,7 @@ public class OrdenServiceImpl implements OrdenService {
         List<DetalleOrdenEntity> detalles = guardarDetalle(request, orden);
 
 
-        PagoPendienteEvent pago = request.getPagoPendienteEvent().toBuilder()
+        PagoDto pago = request.getPagoDto().toBuilder()
                 .idOrden(orden.getId())
                 .reprocesado(false)
                 .build();
@@ -53,7 +53,7 @@ public class OrdenServiceImpl implements OrdenService {
                 .idOrden(orden.getId())
                 .idCliente(request.getIdCliente())
                 .despachoDto(request.getDespachoDto())
-                .pagoPendienteEvent(pago)
+                .pagoDto(pago)
                 .listaDetalle(mapearDetallesResponse(detalles))
                 .build();
     }
