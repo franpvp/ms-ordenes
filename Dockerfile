@@ -23,7 +23,7 @@ COPY --from=build /app/target/ms-ordenes-0.0.1-SNAPSHOT.jar app.jar
 
 # Variables de Entorno (sobreescriben application.properties)
 ENV KAFKA_BOOTSTRAP_SERVERS=kafka:9092 \
-    KAFKA_GROUP_ID=ms-ordenes-pagos-grp \
+    KAFKA_GROUP_ID=ms-ordenes-pagos-grp
 
 
 ENTRYPOINT ["java","-jar","/app/app.jar"]
