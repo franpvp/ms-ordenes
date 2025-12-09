@@ -16,18 +16,17 @@ public class PagoOkConsumer {
 
     private final OrdenRepository ordenRepository;
 
-
     @KafkaListener(
-            topics = "${app.kafka.topic.pago-ok:pago-ok}",
-            groupId = "ms-pagos-grp",
+            topics = "${app.kafka.topic.pago-ok}",
+            groupId = "${spring.kafka.consumer.group-id}",
             containerFactory = "kafkaListenerContainerFactory"
     )
     public void escucharPagoOk(PagoOkEvent event) {
-        log.info("[ms-pagos] Recibido PagoOkEvent: {}", event);
+        log.info("[ms-ordenes] Recibido PagoOkEvent: {}", event);
 
-        OrdenEntity orden = ordenRepository.findById(event.getIdOrden()).orElseThrow(
-                () -> new OrdenNoEncontradaException("Orden no encontrada")
-        );
+        OrdenEntity orden = ordenRepository.findById(event.getIdOrden())
+                .orElseThrow(() -> new OrdenNoEncontradaException("Orden no encontrada"));
+
         orden.setEstadoOrden("PAGO_CORRECTO");
         ordenRepository.save(orden);
     }
