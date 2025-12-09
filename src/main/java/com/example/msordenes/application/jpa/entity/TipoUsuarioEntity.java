@@ -1,7 +1,10 @@
 package com.example.msordenes.application.jpa.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
@@ -9,6 +12,9 @@ import lombok.Setter;
 @Table(name = "TIPO_USUARIO")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class TipoUsuarioEntity {
 
     @Id

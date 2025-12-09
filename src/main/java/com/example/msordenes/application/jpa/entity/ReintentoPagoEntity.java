@@ -1,7 +1,10 @@
 package com.example.msordenes.application.jpa.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -10,6 +13,9 @@ import java.time.LocalDateTime;
 @Table(name = "REINTENTO_PAGO")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ReintentoPagoEntity {
 
     @Id

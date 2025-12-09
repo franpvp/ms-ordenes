@@ -1,41 +1,114 @@
 package com.example.msordenes.application.kafka.config;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.listener.ContainerProperties;
+import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
+import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+import org.springframework.util.backoff.FixedBackOff;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @EnableKafka
 @Configuration
+@Slf4j
 public class KafkaConsumerConfig {
 
     @Bean
-    public ConsumerFactory<String, Object> consumerFactory() {
-        JsonDeserializer<Object> deserializer = new JsonDeserializer<>();
-        deserializer.addTrustedPackages("*");
+    public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory(
+            ConsumerFactory<String, Object> consumerFactory,
+            DefaultErrorHandler errorHandler
+    ) {
+        var f = new ConcurrentKafkaListenerContainerFactory<String, Object>();
+        f.setConsumerFactory(consumerFactory);
 
-        Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka:9092");
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "ms-pagos-grp");
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, deserializer.getClass());
+        // Ack manual
+        f.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
 
-        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), deserializer);
+        // Error handler común
+        f.setCommonErrorHandler(errorHandler);
+
+        return f;
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, Object> factory =
-                new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory());
-        return factory;
+    public DefaultErrorHandler errorHandler(KafkaTemplate<String, Object> template) {
+        var backoff = new FixedBackOff(1000L, 3L);
+        var recoverer = new DeadLetterPublishingRecoverer(
+                template,
+                (record, ex) -> {
+                    String dlt = record.topic() + ".DLT";
+                    log.error("[DLT] Fallo definitivo topic={}, partition={}, offset={}, error={}",
+                            record.topic(), record.partition(), record.offset(), ex.getMessage(), ex);
+                    return new TopicPartition(dlt, record.partition());
+                }
+        );
+        return new DefaultErrorHandler(recoverer, backoff);
+    }
+
+    // ⬇️ Tópico principal: pago-pendiente
+    @Bean
+    public NewTopic pagoPendienteTopic(
+            @Value("${app.kafka.topic.pago-pendiente}") String topic,
+            @Value("${app.kafka.partitions:3}") int partitions,
+            @Value("${app.kafka.replication:1}") short replication
+    ) {
+        return TopicBuilder.name(topic)
+                .partitions(partitions)
+                .replicas(replication)
+                .build();
+    }
+
+    // ⬇️ DLT SOLO para pago-pendiente (es el que consumes aquí)
+    @Bean
+    public NewTopic pagoPendienteDltTopic(
+            @Value("${app.kafka.topic.pago-pendiente}") String topic,
+            @Value("${app.kafka.partitions:3}") int partitions,
+            @Value("${app.kafka.replication:1}") short replication
+    ) {
+        return TopicBuilder.name(topic + ".DLT")
+                .partitions(partitions)
+                .replicas(replication)
+                .build();
+    }
+
+    // ⬇️ Tópico de salida: pago-ok
+    @Bean
+    public NewTopic pagoOkTopic(
+            @Value("${app.kafka.topic.pago-ok}") String topic,
+            @Value("${app.kafka.partitions:3}") int partitions,
+            @Value("${app.kafka.replication:1}") short replication
+    ) {
+        return TopicBuilder.name(topic)
+                .partitions(partitions)
+                .replicas(replication)
+                .build();
+    }
+
+    // ⬇️ Tópico de salida: pago-error
+    @Bean
+    public NewTopic pagoErrorTopic(
+            @Value("${app.kafka.topic.pago-error}") String topic,
+            @Value("${app.kafka.partitions:3}") int partitions,
+            @Value("${app.kafka.replication:1}") short replication
+    ) {
+        return TopicBuilder.name(topic)
+                .partitions(partitions)
+                .replicas(replication)
+                .build();
     }
 }
