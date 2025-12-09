@@ -23,12 +23,7 @@ COPY --from=build /app/target/ms-ordenes-0.0.1-SNAPSHOT.jar app.jar
 
 # Variables de Entorno (sobreescriben application.properties)
 ENV KAFKA_BOOTSTRAP_SERVERS=kafka:9092 \
-    KAFKA_TOPIC_PAGO_PENDIENTE=pago-pendiente \
-    KAFKA_TOPIC_PAGO_OK=pago-ok \
-    KAFKA_TOPIC_PAGO_ERROR=pago-error \
     KAFKA_GROUP_ID=ms-ordenes-pagos-grp \
-    TNS_ADMIN=/app/wallet \
-    SPRING_DATASOURCE_URL="jdbc:oracle:thin:@dqxabcojf1x64nfc_tp?TNS_ADMIN=/app/wallet"
 
 
 ENTRYPOINT ["java","-jar","/app/app.jar"]
