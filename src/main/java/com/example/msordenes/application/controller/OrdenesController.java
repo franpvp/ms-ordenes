@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/ordenes")
+@RequestMapping("/api/v1/ordenes")
 @RequiredArgsConstructor
 @CrossOrigin
 public class OrdenesController {
@@ -42,6 +42,12 @@ public class OrdenesController {
             @PathVariable Long idCliente
     ) {
         OrdenEstadoDto dto = ordenServiceImpl.buscarOrdenPorCliente(idCliente);
+        return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("/{idOrden}")
+    public ResponseEntity<OrdenDto> buscarOrdenPorId(@PathVariable Long idOrden) {
+        OrdenDto dto = ordenServiceImpl.buscarOrdenById(idOrden);
         return ResponseEntity.ok(dto);
     }
 

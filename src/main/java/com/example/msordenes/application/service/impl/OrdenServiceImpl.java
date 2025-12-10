@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -41,7 +42,6 @@ public class OrdenServiceImpl implements OrdenService {
         OrdenEntity orden = guardarOrden(request, despachoGuardado);
         List<DetalleOrdenEntity> detalles = guardarDetalle(request, orden);
 
-
         PagoDto pago = request.getPagoDto().toBuilder()
                 .idOrden(orden.getId())
                 .reprocesado(false)
@@ -58,7 +58,6 @@ public class OrdenServiceImpl implements OrdenService {
                 .build();
     }
 
-
     @Override
     public OrdenEstadoDto buscarOrdenPorCliente(Long idCliente) {
 
@@ -70,6 +69,45 @@ public class OrdenServiceImpl implements OrdenService {
                 .estadoOrden(ultimaOrden.getEstadoOrden())
                 .build();
 
+    }
+
+    @Override
+    public OrdenDto buscarOrdenById(Long id) {
+        OrdenEntity orden = ordenRepository.findById(id)
+                .orElseThrow(() -> new OrdenNoEncontradaException("Orden con id " + id + " no encontrada"));
+
+        // obtener detalles de la orden
+        List<DetalleOrdenEntity> detalleEntities = detalleOrdenRepository.findByOrden_Id(id);
+
+        // mapear detalles a DTO
+        List<DetalleOrdenDto> listaDetalle = mapearDetallesResponse(detalleEntities);
+
+        // mapear despacho
+        DespachoDto despachoDto = DespachoDto.builder()
+                .idDespacho(orden.getDespacho().getId())
+                .nombreDestinatario(orden.getDespacho().getNombreDestinatario())
+                .apellidoDestinatario(orden.getDespacho().getApellidoDestinatario())
+                .telefono(orden.getDespacho().getTelefono())
+                .direccion(orden.getDespacho().getDireccion())
+                .region(orden.getDespacho().getRegion())
+                .ciudadComuna(orden.getDespacho().getCiudadComuna())
+                .codigoPostal(orden.getDespacho().getCodigoPostal())
+                .build();
+
+        // mapear pago
+        PagoDto pagoDto = PagoDto.builder()
+                .idOrden(orden.getId())
+                .idMetodoPago(orden.getPago().getMetodoPago().getId())
+                .monto(orden.getPago().getMonto())
+                .build();
+
+        return OrdenDto.builder()
+                .idOrden(orden.getId())
+                .idCliente(orden.getCliente().getId())
+                .despachoDto(despachoDto)
+                .pagoDto(pagoDto)
+                .listaDetalle(listaDetalle)
+                .build();
     }
 
     private DespachoEntity guardarDespacho(OrdenDto ordenDto) {
@@ -113,5 +151,9 @@ public class OrdenServiceImpl implements OrdenService {
                 })
                 .toList();
     }
+
+
+
+
 
 }

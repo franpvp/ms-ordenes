@@ -4,9 +4,11 @@ import com.example.msordenes.application.jpa.entity.DetalleOrdenEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface DetalleOrdenRepository extends JpaRepository<DetalleOrdenEntity, Long> {
 
-
+    List<DetalleOrdenEntity> findByOrden_Id(Long idOrden);
 }
 

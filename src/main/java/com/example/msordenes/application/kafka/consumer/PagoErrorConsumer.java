@@ -9,6 +9,7 @@ import com.example.msordenes.application.jpa.repository.OrdenRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -22,33 +23,41 @@ public class PagoErrorConsumer {
     @KafkaListener(
             topics = "${app.kafka.topic.pago-error}",
             groupId = "${spring.kafka.consumer.group-id}",
-            containerFactory = "kafkaListenerContainerFactory"
+            containerFactory = "pagoErrorKafkaListenerFactory"
     )
-    public void escucharPagoError(PagoErrorEvent event) {
-        log.info("[ms-ordenes] Recibido PagoErrorEvent: {}", event);
+    public void escucharPagoError(PagoErrorEvent event, Acknowledgment ack) {
+
+        log.warn("[ms-ordenes] Recibido PagoErrorEvent: {}", event);
 
         if ("ERROR CONEXION".equalsIgnoreCase(event.getMotivoError())) {
 
-            log.info("[ms-ordenes] Error recuperable, enviando a ms-reintento: {}", event);
+            log.info("[ms-ordenes] 🔄 Error de conexión, enviando a ms-reintento: {}", event);
+
             ReintentoResponseDto response = reintentoFeignClient.reintentar(event);
 
-            log.info("[ms-ordenes] Respuesta de ms-reintento: {}", response);
+            log.info("[ms-ordenes] 📩 Respuesta de ms-reintento: {}", response);
 
-            if ("AGOTADO".equals(response.getEstado())) {
+            if ("AGOTADO".equalsIgnoreCase(response.getEstado())) {
                 cambiarOrdenAError(event);
             }
+
+            ack.acknowledge();
             return;
         }
 
         cambiarOrdenAError(event);
+
+        ack.acknowledge();
     }
 
     private void cambiarOrdenAError(PagoErrorEvent event) {
+
         OrdenEntity orden = ordenRepository.findById(event.getIdOrden())
                 .orElseThrow(() -> new OrdenNoEncontradaException("Orden no encontrada"));
 
         orden.setEstadoOrden("PAGO_ERROR");
         ordenRepository.save(orden);
+
+        log.error("[ms-ordenes] 🔥 Orden {} marcada como PAGO_ERROR", event.getIdOrden());
     }
 }
-
