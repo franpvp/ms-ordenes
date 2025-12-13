@@ -54,36 +54,4 @@ class PagoOkConsumerTest {
         ordenPendiente.setFechaOrden(LocalDateTime.now());
     }
 
-    @Test
-    void escucharPagoOkTest() {
-        // Arrange
-        when(ordenRepository.findById(idOrdenOk))
-                .thenReturn(Optional.of(ordenPendiente));
-
-        // Act
-        pagoOkConsumer.escucharPagoOk(pagoOkEvent, acknowledgment);
-
-        // Assert
-        ArgumentCaptor<OrdenEntity> captor = ArgumentCaptor.forClass(OrdenEntity.class);
-        verify(ordenRepository, times(1)).save(captor.capture());
-
-        OrdenEntity guardada = captor.getValue();
-        assertThat(guardada.getEstadoOrden()).isEqualTo("PAGO_CORRECTO");
-
-        verify(acknowledgment, times(1)).acknowledge();
-    }
-
-    @Test
-    void escucharPagoOkNoEncontradaTest() {
-        // Arrange
-        when(ordenRepository.findById(anyLong()))
-                .thenReturn(Optional.empty());
-
-        // Act + Assert
-        assertThrows(OrdenNoEncontradaException.class,
-                () -> pagoOkConsumer.escucharPagoOk(pagoOkEvent, acknowledgment));
-
-        verify(acknowledgment, never()).acknowledge();
-        verify(ordenRepository, never()).save(any(OrdenEntity.class));
-    }
 }

@@ -17,15 +17,15 @@ public interface OrdenRepository extends JpaRepository<OrdenEntity, Long> {
     Optional<OrdenEntity> findTopByClienteIdOrderByFechaOrdenDesc(Long idCliente);
 
     @Query("""
-    SELECT new com.example.msordenes.application.dto.OrdenEstadoMetricDto(o.estadoOrden, COUNT(o))
+        SELECT new com.example.msordenes.application.dto.OrdenEstadoMetricDto(o.estadoOrden, COUNT(o))
         FROM OrdenEntity o
         WHERE o.fechaOrden BETWEEN :inicio AND :fin
         GROUP BY o.estadoOrden
     """)
-        List<OrdenEstadoMetricDto> countOrdenesPorEstadoHoy(
-                @Param("inicio") LocalDateTime inicio,
-                @Param("fin") LocalDateTime fin
-        );
+    List<OrdenEstadoMetricDto> countOrdenesPorEstadoHoy(
+            @Param("inicio") LocalDateTime inicio,
+            @Param("fin") LocalDateTime fin
+    );
 
     @Query("""
         SELECT COUNT(o)
@@ -33,10 +33,23 @@ public interface OrdenRepository extends JpaRepository<OrdenEntity, Long> {
         WHERE o.estadoOrden = :estado
         AND o.fechaOrden BETWEEN :inicio AND :fin
     """)
-        Long countByEstadoOrdenAndHoy(
-                @Param("estado") String estado,
-                @Param("inicio") LocalDateTime inicio,
-                @Param("fin") LocalDateTime fin
-        );
-}
+    Long countByEstadoOrdenAndHoy(
+            @Param("estado") String estado,
+            @Param("inicio") LocalDateTime inicio,
+            @Param("fin") LocalDateTime fin
+    );
 
+    // ==========================================================
+    // NUEVO: Cargar TODA la orden con Fetch Join para evitar LazyInitializationException
+    // ==========================================================
+    @Query("""
+        SELECT o FROM OrdenEntity o
+        LEFT JOIN FETCH o.cliente c
+        LEFT JOIN FETCH o.detalles d
+        LEFT JOIN FETCH d.producto p
+        LEFT JOIN FETCH o.despacho des
+        LEFT JOIN FETCH o.pago pag
+        WHERE o.id = :id
+    """)
+    Optional<OrdenEntity> findByIdWithAll(@Param("id") Long id);
+}

@@ -1,6 +1,5 @@
 package com.example.msordenes.application.util;
 
-
 import lombok.experimental.UtilityClass;
 
 @UtilityClass

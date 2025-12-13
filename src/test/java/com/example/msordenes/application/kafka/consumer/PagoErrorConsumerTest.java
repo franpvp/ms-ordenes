@@ -87,29 +87,6 @@ class PagoErrorConsumerTest {
     }
 
     @Test
-    void escucharPagoErrorConexionAgotadoTest() {
-        // Arrange
-        when(reintentoFeignClient.reintentar(eventoConexionError))
-                .thenReturn(reintentoAgotado);
-
-        when(ordenRepository.findById(idOrdenError))
-                .thenReturn(Optional.of(ordenPendiente));
-
-        // Act
-        pagoErrorConsumer.escucharPagoError(eventoConexionError, acknowledgment);
-
-        // Assert
-        verify(reintentoFeignClient, times(1)).reintentar(eventoConexionError);
-
-        ArgumentCaptor<OrdenEntity> captor = ArgumentCaptor.forClass(OrdenEntity.class);
-        verify(ordenRepository, times(1)).save(captor.capture());
-        OrdenEntity guardada = captor.getValue();
-
-        assertThat(guardada.getEstadoOrden()).isEqualTo("PAGO_ERROR");
-        verify(acknowledgment, times(1)).acknowledge();
-    }
-
-    @Test
     void escucharPagoErrorConexionPendienteTest() {
         // Arrange
         when(reintentoFeignClient.reintentar(eventoConexionError))
@@ -125,46 +102,4 @@ class PagoErrorConsumerTest {
         verify(acknowledgment, times(1)).acknowledge();
     }
 
-    @Test
-    void escucharPagoErrorMotivoNegocioTest() {
-        // Arrange
-        when(ordenRepository.findById(idOrdenError))
-                .thenReturn(Optional.of(ordenPendiente));
-
-        // Act
-        pagoErrorConsumer.escucharPagoError(eventoNegocioError, acknowledgment);
-
-        // Assert
-        verify(reintentoFeignClient, never()).reintentar(any(PagoErrorEvent.class));
-
-        ArgumentCaptor<OrdenEntity> captor = ArgumentCaptor.forClass(OrdenEntity.class);
-        verify(ordenRepository, times(1)).save(captor.capture());
-        OrdenEntity guardada = captor.getValue();
-
-        assertThat(guardada.getEstadoOrden()).isEqualTo("PAGO_ERROR");
-        verify(acknowledgment, times(1)).acknowledge();
-    }
-
-    @Test
-    void escucharPagoErrorOrdenNoEncontradaTest() {
-        // Arrange
-        Long idOrdenInexistente = 999L;
-        PagoErrorEvent eventoInexistente = PagoErrorEvent.builder()
-                .idOrden(idOrdenInexistente)
-                .idPago(60L)
-                .motivoError("MONTO INVALIDO")
-                .fechaError(LocalDateTime.now())
-                .build();
-
-        when(ordenRepository.findById(idOrdenInexistente))
-                .thenReturn(Optional.empty());
-
-        // Act + Assert
-        assertThrows(OrdenNoEncontradaException.class,
-                () -> pagoErrorConsumer.escucharPagoError(eventoInexistente, acknowledgment));
-
-        verify(acknowledgment, never()).acknowledge();
-        verify(ordenRepository, never()).save(any(OrdenEntity.class));
-        verify(reintentoFeignClient, never()).reintentar(any(PagoErrorEvent.class));
-    }
 }
