@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/ordenes")
 @RequiredArgsConstructor
@@ -49,6 +51,15 @@ public class OrdenesController {
     public ResponseEntity<OrdenDto> buscarOrdenPorId(@PathVariable Long idOrden) {
         OrdenDto dto = ordenServiceImpl.buscarOrdenById(idOrden);
         return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("/cliente/{idCliente}/historial")
+    public ResponseEntity<List<OrdenDto>> obtenerHistorialCliente(
+            @PathVariable Long idCliente
+    ) {
+        return ResponseEntity.ok(
+                ordenServiceImpl.obtenerHistorialCliente(idCliente)
+        );
     }
 
 

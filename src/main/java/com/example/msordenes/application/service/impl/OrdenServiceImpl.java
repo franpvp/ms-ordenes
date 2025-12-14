@@ -34,7 +34,6 @@ public class OrdenServiceImpl implements OrdenService {
     private final DetalleOrdenRepository detalleOrdenRepository;
     private final ProductoRepository productoRepository;
 
-
     @Transactional
     @Override
     public OrdenDto crearOrden(OrdenDto request) {
@@ -149,6 +148,20 @@ public class OrdenServiceImpl implements OrdenService {
                             .producto(productoDto)
                             .build();
                 })
+                .toList();
+    }
+
+    public List<OrdenDto> obtenerHistorialCliente(Long idCliente) {
+
+        List<OrdenEntity> ordenes =
+                ordenRepository.findByCliente_IdOrderByFechaOrdenDesc(idCliente);
+
+        return ordenes.stream()
+                .filter(o ->
+                        o.getPago() != null &&
+                                o.getPago().getEstadoPago() != null
+                )
+                .map(OrdenEntityMapper::toDto)
                 .toList();
     }
 

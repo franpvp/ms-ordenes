@@ -19,21 +19,31 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Component
 public class OrdenEntityMapper {
 
+    /**
+     * Crear OrdenEntity desde OrdenDto (crear orden)
+     */
     public static OrdenEntity toEntity(OrdenDto orden, DespachoEntity despachoGuardado) {
 
         return OrdenEntity.builder()
-                .cliente(ClienteEntity.builder().id(orden.getIdCliente()).build())
+                .cliente(
+                        ClienteEntity.builder()
+                                .id(orden.getIdCliente())
+                                .build()
+                )
                 .estadoOrden(Constantes.PAGO_PENDIENTE)
                 .fechaOrden(LocalDateTime.now())
                 .despacho(despachoGuardado)
                 .build();
     }
 
-    public OrdenDto toDto(OrdenEntity entity) {
+    /**
+     * Mapear OrdenEntity -> OrdenDto (historial / detalle)
+     */
+    public static OrdenDto toDto(OrdenEntity entity) {
+
         OrdenDto dto = new OrdenDto();
         dto.setIdOrden(entity.getId());
 
@@ -41,10 +51,15 @@ public class OrdenEntityMapper {
             dto.setIdCliente(entity.getCliente().getId());
         }
 
-        if (entity.getDetalles() != null) {
+        // ==========================
+        // DETALLES DE ORDEN
+        // ==========================
+        if (entity.getDetalles() != null && !entity.getDetalles().isEmpty()) {
+
             List<DetalleOrdenDto> detallesDto = new ArrayList<>();
 
             for (DetalleOrdenEntity det : entity.getDetalles()) {
+
                 DetalleOrdenDto detDto = new DetalleOrdenDto();
                 detDto.setIdDetalleOrden(det.getId());
                 detDto.setCantidad(det.getCantidad());
@@ -52,13 +67,15 @@ public class OrdenEntityMapper {
                 if (det.getProducto() != null) {
                     ProductoEntity p = det.getProducto();
 
-                    ProductoDto prod = new ProductoDto();
-                    prod.setIdProducto(p.getId());
-                    prod.setNombre(p.getNombre());
-                    prod.setPrecio(p.getPrecio());
-                    prod.setImagenUrl(p.getImagenUrl());
+                    ProductoDto prodDto = new ProductoDto();
+                    prodDto.setIdProducto(p.getId());
+                    prodDto.setNombre(p.getNombre());
 
-                    detDto.setProducto(prod);
+                    prodDto.setPrecio(p.getPrecio());
+
+                    prodDto.setImagenUrl(p.getImagenUrl());
+
+                    detDto.setProducto(prodDto);
                 }
 
                 detallesDto.add(detDto);
@@ -67,9 +84,14 @@ public class OrdenEntityMapper {
             dto.setListaDetalle(detallesDto);
         }
 
+        // ==========================
+        // DESPACHO
+        // ==========================
         if (entity.getDespacho() != null) {
+
             DespachoEntity d = entity.getDespacho();
             DespachoDto despachoDto = new DespachoDto();
+
             despachoDto.setIdDespacho(d.getId());
             despachoDto.setNombreDestinatario(d.getNombreDestinatario());
             despachoDto.setApellidoDestinatario(d.getApellidoDestinatario());
@@ -78,24 +100,30 @@ public class OrdenEntityMapper {
             despachoDto.setRegion(d.getRegion());
             despachoDto.setCiudadComuna(d.getCiudadComuna());
             despachoDto.setCodigoPostal(d.getCodigoPostal());
+
             dto.setDespachoDto(despachoDto);
         }
 
+        // ==========================
+        // PAGO
+        // ==========================
         if (entity.getPago() != null) {
-            PagoEntity p = entity.getPago();
+
+            PagoEntity pago = entity.getPago();
             PagoDto pagoDto = new PagoDto();
-            pagoDto.setMonto(p.getMonto());
+            pagoDto.setMonto(pago.getMonto());
+
             dto.setPagoDto(pagoDto);
         }
 
         return dto;
     }
 
-    // NUEVO — método utilitario del mapper
+    /**
+     * Total formateado CLP (opcional)
+     */
     public String getTotalFormateado(OrdenEntity entity) {
         OrdenDto dto = toDto(entity);
         return CurrencyUtils.formatCLP(dto.getTotalPrecio());
     }
-
-
 }

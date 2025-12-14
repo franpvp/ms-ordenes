@@ -2,6 +2,7 @@ package com.example.msordenes.application.jpa.repository;
 
 import com.example.msordenes.application.dto.OrdenEstadoMetricDto;
 import com.example.msordenes.application.jpa.entity.OrdenEntity;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -39,9 +40,6 @@ public interface OrdenRepository extends JpaRepository<OrdenEntity, Long> {
             @Param("fin") LocalDateTime fin
     );
 
-    // ==========================================================
-    // NUEVO: Cargar TODA la orden con Fetch Join para evitar LazyInitializationException
-    // ==========================================================
     @Query("""
         SELECT o FROM OrdenEntity o
         LEFT JOIN FETCH o.cliente c
@@ -52,4 +50,14 @@ public interface OrdenRepository extends JpaRepository<OrdenEntity, Long> {
         WHERE o.id = :id
     """)
     Optional<OrdenEntity> findByIdWithAll(@Param("id") Long id);
+
+    @EntityGraph(attributePaths = {
+            "cliente",
+            "detalles",
+            "detalles.producto",
+            "pago",
+            "pago.estadoPago",
+            "despacho"
+    })
+    List<OrdenEntity> findByCliente_IdOrderByFechaOrdenDesc(Long idCliente);
 }
