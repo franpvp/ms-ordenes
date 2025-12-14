@@ -14,6 +14,9 @@ FROM eclipse-temurin:21-jre
 WORKDIR /app
 ENV TZ=America/Santiago
 
+
+
+ENV TNS_ADMIN=/app/wallet
 # Copiar wallet completo (debe copiarse la carpeta con su contenido exacto)
 COPY Wallet_DQXABCOJF1X64NFC /app/wallet
 
