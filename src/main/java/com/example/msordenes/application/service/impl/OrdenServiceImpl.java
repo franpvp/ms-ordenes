@@ -93,13 +93,14 @@ public class OrdenServiceImpl implements OrdenService {
                 .codigoPostal(orden.getDespacho().getCodigoPostal())
                 .build();
 
-        // mapear pago
-        PagoDto pagoDto = PagoDto.builder()
-                .idOrden(orden.getId())
-                .idMetodoPago(orden.getPago().getMetodoPago().getId())
-                .monto(orden.getPago().getMonto())
-                .build();
-
+        PagoDto pagoDto = new PagoDto();
+        if (orden.getPago() != null) {
+            pagoDto = PagoDto.builder()
+                    .idOrden(orden.getId())
+                    .idMetodoPago(orden.getPago().getMetodoPago().getId())
+                    .monto(orden.getPago().getMonto())
+                    .build();
+        }
         return OrdenDto.builder()
                 .idOrden(orden.getId())
                 .idCliente(orden.getCliente().getId())
